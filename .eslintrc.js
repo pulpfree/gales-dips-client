@@ -15,6 +15,7 @@ module.exports = {
     "jsx-a11y/anchor-is-valid": [ "error", {
       "components": [ "Link" ],
       "specialLink": [ "to" ]
-    }]
+    }],
+    "jsx-quotes": ["error", "prefer-single"]
   }
 };

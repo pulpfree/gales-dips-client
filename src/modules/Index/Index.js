@@ -50,9 +50,9 @@ const Reports = Loadable({
   loading: Loading,
 })
 
-
 function Index({ authState }) {
   if (authState !== 'signedIn') return null
+  // console.log('client: ', client)
 
   return (
     <ApolloProvider client={client}>
@@ -64,53 +64,17 @@ function Index({ authState }) {
           <div>
             <Errors />
             <Switch>
-              <Route
-                component={Dashboard}
-                exact
-                path="/"
-              />
-              <Route
-                component={Dips}
-                exact
-                path="/dips"
-              />
-              <Route
-                component={Dips}
-                path="/dips/:date/:stationID"
-              />
-              <Route
-                component={Reports}
-                path="/reports"
-              />
-              <Route
-                component={Propane}
-                exact
-                path="/propane"
-              />
-              <Route
-                component={Propane}
-                path="/propane/:date"
-              />
-              <Route
-                component={ImportData}
-                path="/import-data"
-              />
-              <Route
-                component={Admin}
-                path="/admin"
-              />
-              <Route
-                component={Profile}
-                path="/profile"
-              />
-              <Route
-                component={ChangePassword}
-                path="/change-password"
-              />
-              <Route
-                component={Download}
-                path="/download"
-              />
+              <Route component={Dashboard} exact path='/' />
+              <Route component={Dips} exact path='/dips' />
+              <Route component={Dips} path='/dips/:date/:stationID' />
+              <Route component={Reports} path='/reports' />
+              <Route component={Propane} exact path='/propane' />
+              <Route component={Propane} path='/propane/:date' />
+              <Route component={ImportData} path='/import-data' />
+              <Route component={Admin} path='/admin' />
+              <Route component={Profile} path='/profile' />
+              <Route component={ChangePassword} path='/change-password' />
+              <Route component={Download} path='/download' />
             </Switch>
           </div>
         </MuiPickersUtilsProvider>
@@ -137,10 +101,14 @@ function AppWithAuth() {
       }
       if (cancel) return
       if (user) {
-        const username = user.signInUserSession.idToken.payload['cognito:username']
+        const username =
+          user.signInUserSession.idToken.payload['cognito:username']
         const { name } = user.signInUserSession.idToken.payload
         const storage = window.localStorage
-        storage.setItem(LOCAL_TOKEN_KEY, user.signInUserSession.accessToken.jwtToken)
+        storage.setItem(
+          LOCAL_TOKEN_KEY,
+          user.signInUserSession.accessToken.jwtToken
+        )
         LogRocket.identify(username, {
           name,
           username,
@@ -154,17 +122,13 @@ function AppWithAuth() {
   }, [])
 
   return (
-    <div>
-      <Authenticator
-        hideDefault
-      >
-        <Index />
-        <SignIn />
-        <ConfirmSignIn />
-        <ForgotPassword />
-        <RequireNewPassword />
-      </Authenticator>
-    </div>
+    <Authenticator hideDefault>
+      <Index />
+      <SignIn />
+      <ConfirmSignIn />
+      <ForgotPassword />
+      <RequireNewPassword />
+    </Authenticator>
   )
 }
 

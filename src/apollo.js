@@ -1,10 +1,11 @@
-import {
+/* import {
   ApolloClient,
   HttpLink,
   InMemoryCache,
   defaultDataIdFromObject,
   from,
-} from '@apollo/client'
+} from '@apollo/client' */
+import { ApolloClient, InMemoryCache, createHttpLink, defaultDataIdFromObject, from } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { setContext } from '@apollo/client/link/context'
 import * as Sentry from '@sentry/react'
@@ -25,7 +26,8 @@ const errorLink = onError(({ networkError, graphQLErrors }) => {
     Sentry.captureException(networkError)
   }
 })
-const httpLink = new HttpLink({ uri: config.BASE_URL })
+// const httpLink = new HttpLink({ uri: config.BASE_URL })
+const httpLink = createHttpLink({ uri: config.BASE_URL })
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = window.localStorage.getItem('userToken')
