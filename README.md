@@ -1,5 +1,9 @@
 # Readme
 
+## React
+
+Strict mode was turned off as a result of issues with material-ui error
+
 ## AWS Amplify Setup
 
 The react amplify library is now changed to [Amplify Docs](https://docs.amplify.aws/ui/auth/authenticator/q/framework/react#usage-1)
