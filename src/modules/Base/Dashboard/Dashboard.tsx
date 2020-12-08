@@ -24,7 +24,7 @@ export function Dashboard() {
         </Typography>
         <Grid container spacing={4}>
           {menuItems.map((m) => (
-            <DashButton label={m.label} path={m.path} />
+            <DashButton key={m.path} label={m.label} path={m.path} />
           ))}
         </Grid>
         <Divider light />

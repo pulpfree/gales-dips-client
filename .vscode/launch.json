@@ -16,8 +16,8 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true
-    }/* ,
-    {
+    } ,
+    /*{
       "type": "node",
       "name": "Debug CRA Tests",
       "request": "launch",

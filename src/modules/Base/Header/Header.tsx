@@ -1,12 +1,21 @@
 import React, { useState } from 'react'
 
+import { Auth } from 'aws-amplify'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 
 import { AccountCircle, Menu as MenuIcon } from '@material-ui/icons'
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@material-ui/core'
+import {
+  AppBar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
 
-import { useStyles } from './style'
 import { LinkItems } from '../types'
+import { useStyles } from './style'
+import { useUser } from '../user-context'
 
 const menuItems: LinkItems = [
   { label: 'Dashboard', path: '/' },
@@ -48,8 +57,19 @@ export const Header = () => {
     setUserMenuEl(null)
   }
 
-  const handleLogout = () => {
-    console.log('logging out')
+  const { user, handleSetUser } = useUser()
+
+  React.useEffect(() => (
+    () => handleSetUser({})
+  ), [handleSetUser])
+
+  const handleLogout = async () => {
+    try {
+      await Auth.signOut({ global: true })
+      console.log('logged out')
+    } catch (error) {
+      console.log('error signing out: ', error)
+    }
     setUserMenuEl(null)
   }
 
@@ -100,7 +120,7 @@ export const Header = () => {
             </Link>
           </Typography>
           <div className={classes.userMenu}>
-            User
+            {user.name}
             <IconButton
               aria-haspopup='true'
               color='inherit'
