@@ -15,7 +15,7 @@ import {
 
 import { LinkItems } from '../types'
 import { useStyles } from './style'
-import { useUser } from '../user-context'
+import { useUser } from '../User/UserContext'
 
 const menuItems: LinkItems = [
   { label: 'Dashboard', path: '/' },

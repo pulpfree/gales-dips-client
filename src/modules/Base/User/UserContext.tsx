@@ -11,7 +11,7 @@ type UserContextValue = {
   user: UserT
   setUser: (user: UserT) => void
 }
-const UserContext = React.createContext<UserContextValue | undefined>(undefined)
+export const UserContext = React.createContext({} as UserContextValue)
 
 type UserProviderProps = {
   value?: UserContextValue
@@ -19,7 +19,6 @@ type UserProviderProps = {
 }
 
 function UserProvider(props: UserProviderProps) {
-  console.log('props: ', props)
   const[user, setUser] = React.useState({})
   const value = React.useMemo(() => {
     return {

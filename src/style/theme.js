@@ -1,4 +1,5 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+// import type '@material-ui/lab/themeAugmentation'
 
 import red from '@material-ui/core/colors/red'
 import grey from '@material-ui/core/colors/grey'
@@ -24,8 +25,20 @@ let theme = createMuiTheme({
     // E.g., shift from Red 500 to Red 300 or Red 700.
     tonalOffset: 0.2,
     typography: {
-      fontFamily: 'Roboto',
-      // fontSize: 34,
+      // fontFamily: 'Roboto',
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
+      fontSize: 34,
       useNextVariants: true,
       htmlFontSize: 10,
     },

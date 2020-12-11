@@ -2,7 +2,7 @@ import React from 'react'
 import { fireEvent } from '@testing-library/react'
 
 import { Header } from './Header'
-import { UserProvider } from '../user-context'
+import { UserProvider } from '../User/UserContext'
 
 const Hdr = <UserProvider><Header /></UserProvider>
 

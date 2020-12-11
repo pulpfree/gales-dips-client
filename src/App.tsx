@@ -19,7 +19,7 @@ import { Propane } from './modules/Propane'
 import { Reports } from './modules/Reports'
 import { Import } from './modules/Import'
 import { getTitle } from './utils'
-import { useUser } from './modules/Base/user-context'
+import { useUser } from './modules/Base/User/UserContext'
 
 Amplify.configure(awsExports)
 
@@ -27,10 +27,10 @@ type AuthT = any
 
 export const App: React.FunctionComponent = () => {
   const [authState, setAuthState] = React.useState<AuthState>()
-  
+
   /**
    * TODO: Consider refactoring with better types
-   * The declaration below using 'object | undefined' is the recommended approach by amplify 
+   * The declaration below using 'object | undefined' is the recommended approach by amplify
    * see: https://docs.amplify.aws/ui/auth/authenticator/q/framework/react#use-cases
    * However it does cause typescript errors when attempting to access the values and also since some of the values
    * are nested in a secondary object, I just went with the 'any' types
@@ -49,7 +49,7 @@ export const App: React.FunctionComponent = () => {
     })
   }, [])
 
-  // this is limited to states where user is logged in (signedin) 
+  // this is limited to states where user is logged in (signedin)
   // and so wouldn't work with the above useEffect
   React.useEffect(() => {
     if (authState === 'signedin' && user?.username) {
@@ -70,15 +70,15 @@ export const App: React.FunctionComponent = () => {
       </Helmet>
       <Router>
         <ThemeProvider theme={theme}>
-            <Header />
-            <Switch>
-              <Route component={Dashboard} exact path='/' />
-              <Route component={Dips} exact path='/dips' />
-              <Route component={Propane} exact path='/propane' />
-              <Route component={Reports} exact path='/reports' />
-              <Route component={Import} exact path='/import-data' />
-              <Route component={NoMatch} path='*' />
-            </Switch>
+          <Header />
+          <Switch>
+            <Route component={Dashboard} exact path='/' />
+            <Route component={Dips} exact path='/dips' />
+            <Route component={Propane} exact path='/propane' />
+            <Route component={Reports} exact path='/reports' />
+            <Route component={Import} exact path='/import-data' />
+            <Route component={NoMatch} path='*' />
+          </Switch>
         </ThemeProvider>
       </Router>
     </ApolloProvider>
