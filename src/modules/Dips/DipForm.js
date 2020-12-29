@@ -16,7 +16,6 @@ import red from '@material-ui/core/colors/red'
 import Toaster from '../Base/Toaster'
 import { fmtNumber } from '../../utils/utils'
 
-
 class DipForm extends Component {
   constructor(props) {
     super(props)
@@ -102,15 +101,7 @@ class DipForm extends Component {
   }
 
   render() {
-    const {
-      classes,
-      dirty,
-      editMode,
-      errors,
-      isSubmitting,
-      tankDips,
-      values,
-    } = this.props
+    const { classes, dirty, editMode, errors, isSubmitting, tankDips, values } = this.props
     const errorKeys = Object.keys(errors).length
     const submitLabel = editMode ? 'Edit Dips' : 'Save Dips'
     const rows = []
@@ -127,18 +118,11 @@ class DipForm extends Component {
 
     return (
       <div className={classes.container}>
-        <Typography
-          gutterBottom
-          variant="h6"
-        >Dips
+        <Typography gutterBottom variant='h6'>
+          Dips
         </Typography>
 
-        <form
-          autoComplete="off"
-          className={classes.form}
-          noValidate
-          onSubmit={this.handleSubmit}
-        >
+        <form autoComplete='off' className={classes.form} noValidate onSubmit={this.handleSubmit}>
           <div className={classes.headerRow}>
             <div className={classes.headerCell}>Tank</div>
             <div className={classNames([classes.headerCell], [classes.alignCenter])}>Level</div>
@@ -148,20 +132,13 @@ class DipForm extends Component {
           </div>
 
           {rows.map((t, i) => (
-            <div
-              className={classNames(
-                  classes.dataRow,
-                  { [classes.errorDanger]: errors[t.id] }
-                )}
-              key={t.id}
-            >
+            <div className={classNames(classes.dataRow, { [classes.errorDanger]: errors[t.id] })} key={t.id}>
               <div className={classNames(classes.dataCell, classes.botSpacerField)}>
-                {t.size} ({t.tankID})
-                <span style={{ display: 'inline', marginLeft: 15 }}>{t.fuelType}</span>
+                {t.size} ({t.tankID})<span style={{ display: 'inline', marginLeft: 15 }}>{t.fuelType}</span>
               </div>
               <div className={classes.dataCell}>
                 <FormControl
-                  aria-describedby="size-helper-text"
+                  aria-describedby='size-helper-text'
                   className={classes.formControl}
                   error={!!errors[`${t.id}_level`]}
                 >
@@ -171,33 +148,31 @@ class DipForm extends Component {
                     id={`${t.id}_level`}
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
-                    type="number"
+                    type='number'
                     value={values.tanks[t.id] ? values.tanks[t.id].level : ''}
                   />
-                  <FormHelperText id="level-text">{errors[`${t.id}_level`]}</FormHelperText>
+                  <FormHelperText id='level-text'>{errors[`${t.id}_level`]}</FormHelperText>
                 </FormControl>
               </div>
-              <div className={
-                classNames(classes.dataCell, classes.dataAlignRight, classes.botSpacerField)}
-              >
+              <div className={classNames(classes.dataCell, classes.dataAlignRight, classes.botSpacerField)}>
                 {values.tanks[t.id] && fmtNumber(values.tanks[t.id].litres, 0, true)}
               </div>
               <div className={classes.dataCell}>
                 <FormControl
-                  aria-describedby="size-helper-text"
+                  aria-describedby='size-helper-text'
                   className={classes.formControl}
                   error={!!errors[`${t.id}_delivery`]}
                 >
                   <Input
                     className={classes.input}
                     id={`${t.id}_delivery`}
-                    name="delivery"
+                    name='delivery'
                     onBlur={this.handleBlur}
                     onChange={this.handleChange}
-                    type="number"
+                    type='number'
                     value={values.tanks[t.id].delivery}
                   />
-                  <FormHelperText id="delivery-text">{errors[`${t.id}_delivery`]}</FormHelperText>
+                  <FormHelperText id='delivery-text'>{errors[`${t.id}_delivery`]}</FormHelperText>
                 </FormControl>
               </div>
             </div>
@@ -206,10 +181,10 @@ class DipForm extends Component {
             <div className={classes.buttonContainer}>
               <Button
                 className={classes.submitButton}
-                color="primary"
+                color='primary'
                 disabled={!dirty || isSubmitting || !!errorKeys}
-                type="submit"
-                variant="contained"
+                type='submit'
+                variant='contained'
               >
                 <Save className={classNames(classes.leftIcon, classes.iconSmall)} />
                 {submitLabel}
@@ -238,7 +213,7 @@ DipForm.propTypes = {
   values: PropTypes.instanceOf(Object).isRequired,
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   alignRight: {
     textAlign: 'right',
   },

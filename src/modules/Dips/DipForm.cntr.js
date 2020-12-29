@@ -11,22 +11,22 @@ import * as errorActions from '../Error/errorActions'
 import { datePrevDay, dateToInt } from '../../utils/date'
 import { DIP_QUERY } from './Dips.cntr'
 
-
 const CREATE_DIPS = gql`
-mutation CreateDips($fields: [DipInput]) {
-  createDips(input: $fields) {
-    ok
-    nModified
+  mutation CreateDips($fields: [DipInput]) {
+    createDips(input: $fields) {
+      ok
+      nModified
+    }
   }
-}
 `
 
 const PersistDip = graphql(CREATE_DIPS, {
   props: ({ mutate }) => ({
-    PersistDip: fields => mutate({
-      variables: { fields },
-      errorPolicy: 'all',
-    }),
+    PersistDip: (fields) =>
+      mutate({
+        variables: { fields },
+        errorPolicy: 'all',
+      }),
   }),
   options: ({ match: { params } }) => ({
     refetchQueries: [
@@ -100,7 +100,6 @@ const extractInput = (date, stationID, fields) => {
 // see: https://github.com/jquense/yup#mixedwhenkeys-string--arraystring-builder-object--value-schema-schema-schema
 // for possible method to valid our fields
 const DipFormCntr = withFormik({
-
   enableReinitialize: true,
   mapPropsToValues: ({ tankDips }) => ({ tanks: tankDips }),
   handleSubmit: async (values, { props, setSubmitting, setErrors }) => {
@@ -118,7 +117,10 @@ const DipFormCntr = withFormik({
       return
     }
 
-    const { actions, match: { params } } = props
+    const {
+      actions,
+      match: { params },
+    } = props
     let graphqlReturn
     const submitVals = extractInput(dateToInt(params.date), params.stationID, values.tanks)
     try {
@@ -137,18 +139,13 @@ const DipFormCntr = withFormik({
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({
-      ...errorActions,
-    }, dispatch),
+    actions: bindActionCreators(
+      {
+        ...errorActions,
+      },
+      dispatch,
+    ),
   }
 }
 
-export default compose(
-  withRouter,
-  PersistDip,
-  connect(
-    null,
-    mapDispatchToProps
-  ),
-  DipFormCntr,
-)(DipForm)
+export default compose(withRouter, PersistDip, connect(null, mapDispatchToProps), DipFormCntr)(DipForm)

@@ -4,7 +4,11 @@ import { fireEvent } from '@testing-library/react'
 import { Header } from './Header'
 import { UserProvider } from '../User/UserContext'
 
-const Hdr = <UserProvider><Header /></UserProvider>
+const Hdr = (
+  <UserProvider>
+    <Header />
+  </UserProvider>
+)
 
 describe('Header', () => {
   it('renders correctly', () => {

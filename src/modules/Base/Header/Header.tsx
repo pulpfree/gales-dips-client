@@ -4,14 +4,7 @@ import { Auth } from 'aws-amplify'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 
 import { AccountCircle, Menu as MenuIcon } from '@material-ui/icons'
-import {
-  AppBar,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from '@material-ui/core'
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@material-ui/core'
 
 import { LinkItems } from '../types'
 import { useStyles } from './style'
@@ -23,10 +16,10 @@ const menuItems: LinkItems = [
   { label: 'Contact', path: '/contact' },
 ]
 
-export const Header = () => {
+export const Header = (): JSX.Element => {
   const classes = useStyles()
-  let location = useLocation()
-  let history = useHistory()
+  const location = useLocation()
+  const history = useHistory()
 
   const selectedIndex = location.pathname
   const [mainMenuEl, setMainMenuEl] = useState<null | HTMLElement>(null)
@@ -48,10 +41,7 @@ export const Header = () => {
     setUserMenuEl(null)
   }
 
-  const handleNavigate = (
-    event: React.MouseEvent<HTMLElement>,
-    path: string
-  ) => {
+  const handleNavigate = (event: React.MouseEvent<HTMLElement>, path: string) => {
     history.push(path)
     setMainMenuEl(null)
     setUserMenuEl(null)
@@ -59,9 +49,7 @@ export const Header = () => {
 
   const { user, handleSetUser } = useUser()
 
-  React.useEffect(() => (
-    () => handleSetUser({})
-  ), [handleSetUser])
+  React.useEffect(() => () => handleSetUser({}), [handleSetUser])
 
   const handleLogout = async () => {
     try {
@@ -121,11 +109,7 @@ export const Header = () => {
           </Typography>
           <div className={classes.userMenu}>
             {user.name}
-            <IconButton
-              aria-haspopup='true'
-              color='inherit'
-              onClick={handleUserMenuClick}
-            >
+            <IconButton aria-haspopup='true' color='inherit' onClick={handleUserMenuClick}>
               <AccountCircle />
             </IconButton>
             <Menu
@@ -142,9 +126,7 @@ export const Header = () => {
                 horizontal: 'right',
               }}
             >
-              <MenuItem onClick={(e) => handleNavigate(e, '/profile')}>
-                Profile
-              </MenuItem>
+              <MenuItem onClick={(e) => handleNavigate(e, '/profile')}>Profile</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>

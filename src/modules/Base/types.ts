@@ -3,4 +3,4 @@ export interface LinkItem {
   path: string
 }
 
-export interface LinkItems extends Array<LinkItem> {}
+export type LinkItems = Array<LinkItem>

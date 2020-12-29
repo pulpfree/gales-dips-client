@@ -6,7 +6,7 @@ import { AlertTitle } from '@material-ui/lab'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 
-import { ContentContainer } from '../Components/ContentContainer'
+import { ContentContainer } from '../Base/ContentContainer'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,10 +37,10 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 450,
       minWidth: 400,
     },
-  })
+  }),
 )
 
-export function Reports() {
+export function Reports(): JSX.Element {
   const classes = useStyles()
   const [, setOpen] = React.useState(true)
 
@@ -57,14 +57,7 @@ export function Reports() {
   }
 
   function Alert(props: AlertProps) {
-    return (
-      <MuiAlert
-        elevation={6}
-        variant='filled'
-        {...props}
-        className={classes.actionItem}
-      />
-    )
+    return <MuiAlert elevation={6} variant='filled' {...props} className={classes.actionItem} />
   }
 
   return (
@@ -108,11 +101,7 @@ export function Reports() {
           All good, managed to update the Dip
         </Alert>
 
-        <Alert
-          onClose={handleClose}
-          severity='warning'
-          className={classes.actionItem}
-        >
+        <Alert onClose={handleClose} severity='warning' className={classes.actionItem}>
           <AlertTitle>Alert</AlertTitle>
           This is a success message with a somewhat longer message.
         </Alert>

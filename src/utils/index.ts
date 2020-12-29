@@ -1,4 +1,11 @@
-// todo: handle empty or invalid input
+/* eslint-disable */
+/**
+ * Core utilities file
+ *
+ * @todo fix eslint and typescript issues 
+ * @todo: handle empty or invalid input
+ */
+
 
 export const extractPathParts = (pathname: string, start = 2): Array<string> | null => {
   const prts = pathname.split('/')

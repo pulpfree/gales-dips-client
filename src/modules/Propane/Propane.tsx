@@ -5,13 +5,13 @@ import Button from '@material-ui/core/Button'
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import Snackbar from '@material-ui/core/Snackbar'
 
-import { ContentContainer } from '../Components/ContentContainer'
+import { ContentContainer } from '../Base/ContentContainer'
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant='filled' {...props} />
 }
 
-export function Propane() {
+export function Propane(): JSX.Element {
   const [open, setOpen] = React.useState(false)
 
   const handleClick = () => {

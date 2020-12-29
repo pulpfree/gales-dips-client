@@ -1,10 +1,10 @@
 import React from 'react'
 
 export type UserT = Partial<{
-  username: string,
-  name: string,
-  email: string,
-  isLoggedIn: boolean,
+  username: string
+  name: string
+  email: string
+  isLoggedIn: boolean
 }>
 
 type UserContextValue = {
@@ -18,8 +18,13 @@ type UserProviderProps = {
   children: React.ReactNode
 }
 
-function UserProvider(props: UserProviderProps) {
-  const[user, setUser] = React.useState({})
+type UseUserT = {
+  user: UserT
+  handleSetUser: (user: UserT) => void
+}
+
+function UserProvider(props: UserProviderProps): JSX.Element {
+  const [user, setUser] = React.useState({})
   const value = React.useMemo(() => {
     return {
       user,
@@ -29,7 +34,7 @@ function UserProvider(props: UserProviderProps) {
   return <UserContext.Provider value={value} {...props} />
 }
 
-function useUser() {
+function useUser(): UseUserT {
   const context = React.useContext(UserContext)
   if (!context) {
     throw new Error('useUser must be used within a UserProvider')
@@ -38,7 +43,7 @@ function useUser() {
   const handleSetUser = React.useCallback((user) => setUser(user), [setUser])
   return {
     user,
-    handleSetUser
+    handleSetUser,
   }
 }
 

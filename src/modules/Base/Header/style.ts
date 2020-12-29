@@ -20,5 +20,5 @@ export const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       textAlign: 'right',
     },
-  })
+  }),
 )

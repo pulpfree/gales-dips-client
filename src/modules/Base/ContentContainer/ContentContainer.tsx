@@ -8,5 +8,5 @@ export const ContentContainer = withStyles((theme: Theme) =>
       margin: theme.spacing(2),
       padding: theme.spacing(2),
     },
-  })
+  }),
 )(Paper)

@@ -20,10 +20,16 @@ import { Reports } from './modules/Reports'
 import { Import } from './modules/Import'
 import { getTitle } from './utils'
 import { useUser } from './modules/Base/User/UserContext'
+import { Alerts, AlertProvider } from './modules/Base/Alert'
 
 Amplify.configure(awsExports)
 
-type AuthT = any
+/* type AuthT = {
+  username: string,
+  name: string,
+  email: string,
+  isLoggedIn: boolean,
+} */
 
 export const App: React.FunctionComponent = () => {
   const [authState, setAuthState] = React.useState<AuthState>()
@@ -38,8 +44,7 @@ export const App: React.FunctionComponent = () => {
    * and: https://stackoverflow.com/questions/43338763/typescript-property-does-not-exist-on-type-object
    */
 
-  // const [user, setUser] = React.useState<object | undefined>()
-  const [user, setUser] = React.useState<AuthT>()
+  const [user, setUser] = React.useState<any | undefined>() // eslint-disable-line @typescript-eslint/no-explicit-any
   const { handleSetUser } = useUser()
 
   React.useEffect(() => {
@@ -53,7 +58,7 @@ export const App: React.FunctionComponent = () => {
   // and so wouldn't work with the above useEffect
   React.useEffect(() => {
     if (authState === 'signedin' && user?.username) {
-      const USER: AuthT = {
+      const USER = {
         username: user.username,
         name: user.attributes.name,
         email: user.attributes.email,
@@ -70,15 +75,18 @@ export const App: React.FunctionComponent = () => {
       </Helmet>
       <Router>
         <ThemeProvider theme={theme}>
-          <Header />
-          <Switch>
-            <Route component={Dashboard} exact path='/' />
-            <Route component={Dips} exact path='/dips' />
-            <Route component={Propane} exact path='/propane' />
-            <Route component={Reports} exact path='/reports' />
-            <Route component={Import} exact path='/import-data' />
-            <Route component={NoMatch} path='*' />
-          </Switch>
+          <AlertProvider>
+            <Alerts />
+            <Header />
+            <Switch>
+              <Route component={Dashboard} exact path='/' />
+              <Route component={Dips} exact path='/dips' />
+              <Route component={Propane} exact path='/propane' />
+              <Route component={Reports} exact path='/reports' />
+              <Route component={Import} exact path='/import-data' />
+              <Route component={NoMatch} path='*' />
+            </Switch>
+          </AlertProvider>
         </ThemeProvider>
       </Router>
     </ApolloProvider>

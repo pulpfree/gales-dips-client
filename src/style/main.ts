@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
       pointerEvents: 'none',
       zIndex: -1,
     },
-  })
+  }),
 )
 
 export default useStyles

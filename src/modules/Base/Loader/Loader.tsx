@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { useStyles } from './style'
 
-export const Loader = () => {
+export const Loader = (): JSX.Element => {
   const classes = useStyles()
 
   return (

@@ -11,15 +11,12 @@ const GET_STATIONS = gql`
   }
 `
 
-export const StationSelector = () => {
+export const StationSelector = (): JSX.Element => {
   const { loading, error, data } = useQuery(GET_STATIONS)
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>
   console.table(data.stations)
 
-  return (
-    <>
-    </>
-  )
+  return <></>
 }

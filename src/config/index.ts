@@ -23,4 +23,6 @@ const conf = {
 }
 const config = conf[getEnv()]
 
+export const LOCAL_TOKEN_KEY = 'userToken'
+
 export default config

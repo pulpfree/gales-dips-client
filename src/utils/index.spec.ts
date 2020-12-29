@@ -1,4 +1,10 @@
-/* eslint no-undef: "off" */
+/* eslint-disable */
+/**
+ * Core utilities file
+ *
+ * @todo fix eslint and typescript issues 
+ * @todo: handle empty or invalid input
+ */
 
 // To test file: yarn test src/utils/index.spec.ts
 

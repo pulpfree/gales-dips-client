@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { NoMatch } from './NoMatch'
 
 describe('NoMatch', () => {

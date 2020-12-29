@@ -34,7 +34,7 @@ describe('UserProvider', () => {
     // const { handleSetUser } = useUser()
     const value = {
       user: userVals,
-      setUser: (user: UserT) => null
+      setUser: (user: UserT) => null, // eslint-disable-line
     }
     // const { handleSetUser } = useUser()
     // handleSetUser(userVals)
@@ -42,7 +42,7 @@ describe('UserProvider', () => {
     render(
       <UserProvider value={value}>
         <UserContext.Consumer>{mockChildrenFunction}</UserContext.Consumer>
-      </UserProvider>
+      </UserProvider>,
     )
 
     // console.log('keys: ', Object.keys(all.container.innerHTML))
