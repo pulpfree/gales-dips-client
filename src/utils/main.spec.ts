@@ -14,7 +14,7 @@ import {
   getEnv,
   getTitle,
   // setOrderedFuelTypes,
-} from './index'
+} from './main'
 
 describe('extractPathParts', () => {
   const path = '/dips/2018-05-30/c9d27fe9-9b0e-450c-9f2e-149a55d0a881'

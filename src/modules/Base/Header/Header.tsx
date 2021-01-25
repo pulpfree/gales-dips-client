@@ -8,7 +8,7 @@ import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@materi
 
 import { LinkItems } from '../types'
 import { useStyles } from './style'
-import { useUser } from '../User/UserContext'
+import { useUserDispatch, useUserState } from '../User/UserContext'
 
 const menuItems: LinkItems = [
   { label: 'Dashboard', path: '/' },
@@ -24,6 +24,8 @@ export const Header = (): JSX.Element => {
   const selectedIndex = location.pathname
   const [mainMenuEl, setMainMenuEl] = useState<null | HTMLElement>(null)
   const [userMenuEl, setUserMenuEl] = useState<null | HTMLElement>(null)
+
+  const user = useUserState()
 
   const handleMainMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMainMenuEl(event.currentTarget)
@@ -47,9 +49,8 @@ export const Header = (): JSX.Element => {
     setUserMenuEl(null)
   }
 
-  const { user, handleSetUser } = useUser()
-
-  React.useEffect(() => () => handleSetUser({}), [handleSetUser])
+  const userDispatch = useUserDispatch()
+  React.useEffect(() => () => userDispatch({}), [userDispatch])
 
   const handleLogout = async () => {
     try {

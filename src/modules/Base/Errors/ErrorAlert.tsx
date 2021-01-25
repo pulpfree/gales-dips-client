@@ -1,12 +1,17 @@
+/**
+ * ErrorAlert
+ *
+ * Inspiration for this was taken from https://kentcdodds.com/blog/use-react-error-boundary-to-handle-errors-in-react
+ */
+
 import React from 'react'
 
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-// import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
 import { Alert, AlertTitle } from '@material-ui/lab'
-// import IconButton from '@material-ui/core/IconButton'
-// import CloseIcon from '@material-ui/icons/Close'
 
-// import { ContentContainer } from '../Base/ContentContainer'
+type ErrorProps = {
+  error: Error
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,19 +37,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export function Reports(): JSX.Element {
+export const ErrorAlert = ({ error }: ErrorProps): JSX.Element => {
   const classes = useStyles()
-
-  /* function Alert(props: AlertProps) {
-    return <MuiAlert elevation={6} variant='filled' {...props} className={classes.actionItem} />
-  } */
 
   return (
     <div className={classes.root}>
       <Alert className={classes.actionItem} severity='error' variant='filled'>
         <AlertTitle className={classes.errorTxt}>Something went wrong:</AlertTitle>
-        {/* <pre style={{ color: 'red' }}>{error.message}</pre> */}
-        <pre className={classes.errorTxt}>Some kinda longer message here i...</pre>
+        {error.message}
       </Alert>
     </div>
   )

@@ -33,7 +33,7 @@ export const AlertProvider = ({ children }: AlertProviderProps): JSX.Element => 
 export const useAlertState = (): State => {
   const context = React.useContext(AlertStateContext)
   if (context === undefined) {
-    throw new Error('useAlertState must be used within a CountProvider')
+    throw new Error('useAlertState must be used within a AlertProvider')
   }
   return context
 }
@@ -41,7 +41,7 @@ export const useAlertState = (): State => {
 export const useAlertDispatch = (): Dispatch => {
   const context = React.useContext(AlertDispatchContext)
   if (context === undefined) {
-    throw new Error('useAlertDispatch must be used within a CountProvider')
+    throw new Error('useAlertDispatch must be used within a AlertProvider')
   }
   return context
 }

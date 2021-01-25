@@ -4,6 +4,7 @@ import { AmplifyAuthenticator, AmplifySignIn } from '@aws-amplify/ui-react'
 import { ApolloProvider } from '@apollo/client'
 import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
 import { Helmet } from 'react-helmet'
 import { ThemeProvider } from '@material-ui/core/styles'
 import Amplify from 'aws-amplify'
@@ -19,17 +20,12 @@ import { Propane } from './modules/Propane'
 import { Reports } from './modules/Reports'
 import { Import } from './modules/Import'
 import { getTitle } from './utils'
-import { useUser } from './modules/Base/User/UserContext'
+import { useUserDispatch } from './modules/Base/User/UserContext'
 import { Alerts, AlertProvider } from './modules/Base/Alert'
+import { ErrorAlert } from './modules/Base/Errors'
+import { setToken } from './utils'
 
 Amplify.configure(awsExports)
-
-/* type AuthT = {
-  username: string,
-  name: string,
-  email: string,
-  isLoggedIn: boolean,
-} */
 
 export const App: React.FunctionComponent = () => {
   const [authState, setAuthState] = React.useState<AuthState>()
@@ -44,51 +40,52 @@ export const App: React.FunctionComponent = () => {
    * and: https://stackoverflow.com/questions/43338763/typescript-property-does-not-exist-on-type-object
    */
 
-  const [user, setUser] = React.useState<any | undefined>() // eslint-disable-line @typescript-eslint/no-explicit-any
-  const { handleSetUser } = useUser()
+  const [authData, setAuthData] = React.useState<any | undefined>() // eslint-disable-line @typescript-eslint/no-explicit-any
+  const userDispatch = useUserDispatch()
 
   React.useEffect(() => {
     return onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState)
-      setUser(authData)
+      setAuthData(authData)
     })
   }, [])
 
-  // this is limited to states where user is logged in (signedin)
-  // and so wouldn't work with the above useEffect
   React.useEffect(() => {
-    if (authState === 'signedin' && user?.username) {
+    if (authState === 'signedin' && authData?.username) {
       const USER = {
-        username: user.username,
-        name: user.attributes.name,
-        email: user.attributes.email,
+        username: authData.username,
+        name: authData.attributes.name,
+        email: authData.attributes.email,
         isLoggedIn: true,
       }
-      handleSetUser(USER)
+      setToken(authData)
+      userDispatch(USER)
     }
-  }, [authState, handleSetUser, user])
+  }, [authState, userDispatch, authData])
 
-  return authState === AuthState.SignedIn && user ? (
+  return authState === AuthState.SignedIn && authData ? (
     <ApolloProvider client={client}>
       <Helmet>
         <title>{getTitle()}</title>
       </Helmet>
-      <Router>
-        <ThemeProvider theme={theme}>
-          <AlertProvider>
+      <ThemeProvider theme={theme}>
+        <AlertProvider>
+          <Router>
             <Alerts />
             <Header />
-            <Switch>
-              <Route component={Dashboard} exact path='/' />
-              <Route component={Dips} exact path='/dips' />
-              <Route component={Propane} exact path='/propane' />
-              <Route component={Reports} exact path='/reports' />
-              <Route component={Import} exact path='/import-data' />
-              <Route component={NoMatch} path='*' />
-            </Switch>
-          </AlertProvider>
-        </ThemeProvider>
-      </Router>
+            <ErrorBoundary FallbackComponent={ErrorAlert}>
+              <Switch>
+                <Route component={Dashboard} exact path='/' />
+                <Route component={Dips} exact path='/dips' />
+                <Route component={Propane} exact path='/propane' />
+                <Route component={Reports} exact path='/reports' />
+                <Route component={Import} exact path='/import-data' />
+                <Route component={NoMatch} path='*' />
+              </Switch>
+            </ErrorBoundary>
+          </Router>
+        </AlertProvider>
+      </ThemeProvider>
     </ApolloProvider>
   ) : (
     <AmplifyAuthenticator style={{ borderRadius: 'green' }}>

@@ -5,6 +5,7 @@
  * Docs for amazon-cognito-identity-js https://www.npmjs.com/package/amazon-cognito-identity-js
  *
  * @TODO: get rid of TS 'any' where possible
+ * @TODO: add tests
  */
 import {
   CognitoRefreshToken,
@@ -105,7 +106,7 @@ export async function getToken(): Promise<any | null> {
 }
 
 // TODO: check if we can substitute 'any' for the user argument
-export function setToken(user: any): void { // eslint-disable-line
+export function setToken(authData: any): void { // eslint-disable-line
   const storage = window.localStorage
-  storage.setItem(LOCAL_TOKEN_KEY, user.signInUserSession.accessToken.jwtToken)
+  storage.setItem(LOCAL_TOKEN_KEY, authData.signInUserSession.accessToken.jwtToken)
 }

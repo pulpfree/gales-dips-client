@@ -1,6 +1,7 @@
-import { getEnv } from '../utils/'
+import { getEnv } from '../utils/main'
 
 const prodDomain = 'https://api-prod.gdps.pfapi.io/graphql'
+// const prodDomain = 'http://192.168.86.137:4000'
 const stageDomain = 'https://api-stage.gdps.pfapi.io/graphql'
 
 // const liveURI = 'https://fqhx4fm4d8.execute-api.ca-central-1.amazonaws.com/Prod/graphql'

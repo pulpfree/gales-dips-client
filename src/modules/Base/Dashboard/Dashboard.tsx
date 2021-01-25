@@ -7,9 +7,10 @@ import { Divider, Grid, Paper, Typography } from '@material-ui/core'
 import { DashButton } from './DashButton'
 import { LinkItems } from '../types'
 import useStyles from '../../../style/main'
-import { later } from '../../../utils/test'
+// import { later } from '../../../utils/test'
 import { PageTitle } from '../PageTitle'
 import { Loader } from '../Loader'
+import { ErrorAlert } from '../Errors'
 
 const menuItems: LinkItems = [
   { label: 'Dip Entries', path: '/dips' },
@@ -29,19 +30,19 @@ export const GET_STATIONS = gql`
 
 export function Dashboard(): JSX.Element {
   const classes = useStyles()
-  const [load, setLoader] = React.useState(true)
+  // const [load, setLoader] = React.useState(true)
   const { loading, error } = useQuery(GET_STATIONS)
 
-  React.useEffect(() => {
+  /* React.useEffect(() => {
     const myFunc = async (ms: number, msg: string) => {
       const res = await later(ms, msg)
       setLoader(false)
       return res
     }
     myFunc(3000, '')
-  }, [load])
+  }, [load]) */
 
-  if (error) return <p>Error : {error.message}(</p>
+  if (error) return <ErrorAlert error={error} />
 
   return (
     <>

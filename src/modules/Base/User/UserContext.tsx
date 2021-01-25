@@ -1,50 +1,42 @@
 import React from 'react'
 
-export type UserT = Partial<{
+type State = Partial<{
   username: string
   name: string
   email: string
   isLoggedIn: boolean
 }>
-
-type UserContextValue = {
-  user: UserT
-  setUser: (user: UserT) => void
-}
-export const UserContext = React.createContext({} as UserContextValue)
+type Dispatch = (user: State) => void
 
 type UserProviderProps = {
-  value?: UserContextValue
   children: React.ReactNode
 }
 
-type UseUserT = {
-  user: UserT
-  handleSetUser: (user: UserT) => void
-}
+const UserStateContext = React.createContext<State | undefined>(undefined)
+const UserDispatchContext = React.createContext<Dispatch | undefined>(undefined)
 
-function UserProvider(props: UserProviderProps): JSX.Element {
+export const UserProvider = ({ children }: UserProviderProps): JSX.Element => {
   const [user, setUser] = React.useState({})
-  const value = React.useMemo(() => {
-    return {
-      user,
-      setUser,
-    }
-  }, [user])
-  return <UserContext.Provider value={value} {...props} />
+
+  return (
+    <UserStateContext.Provider value={user}>
+      <UserDispatchContext.Provider value={setUser}>{children}</UserDispatchContext.Provider>
+    </UserStateContext.Provider>
+  )
 }
 
-function useUser(): UseUserT {
-  const context = React.useContext(UserContext)
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider')
+export const useUserState = (): State => {
+  const context = React.useContext(UserStateContext)
+  if (context === undefined) {
+    throw new Error('useUserState must be used within a UserProvider')
   }
-  const { user, setUser } = context
-  const handleSetUser = React.useCallback((user) => setUser(user), [setUser])
-  return {
-    user,
-    handleSetUser,
-  }
+  return context
 }
 
-export { UserProvider, useUser }
+export const useUserDispatch = (): Dispatch => {
+  const context = React.useContext(UserDispatchContext)
+  if (context === undefined) {
+    throw new Error('useUserState must be used within a UserProvider')
+  }
+  return context
+}
