@@ -4,6 +4,7 @@ import { InputLabel, MenuItem, Select } from '@material-ui/core'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 
 import { useQuery, gql } from '@apollo/client'
+import { useParams } from 'react-router-dom'
 
 const GET_STATIONS = gql`
   query Stations {
@@ -19,6 +20,10 @@ type Station = {
   name: string
 }
 
+interface SelectorProps {
+  stationHandler: (id: string) => void
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     selectEmpty: {
@@ -27,14 +32,27 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const StationSelector = (): JSX.Element => {
+export const StationSelector = ({ stationHandler }: SelectorProps): JSX.Element => {
   const classes = useStyles()
+  const { stationID } = useParams<{ date: string; stationID: string }>()
   const { loading, error, data } = useQuery(GET_STATIONS)
+  const [station, setStation] = React.useState('')
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const stnID = event.target.value as string
+    setStation(stnID)
+    stationHandler(stnID)
+  }
+
+  React.useEffect(() => {
+    if (stationID) {
+      setStation(stationID)
+      stationHandler(stationID)
+    }
+  }, [])
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>
-  // console.table(data.stations)
-  // console.log(data.stations)
 
   return (
     <>
@@ -43,9 +61,8 @@ export const StationSelector = (): JSX.Element => {
         labelId='station-select-label'
         id='station-select'
         className={classes.selectEmpty}
-        value={''}
-        // value={age}
-        // onChange={handleChange}
+        value={station}
+        onChange={handleChange}
       >
         {data.stations.map((s: Station) => (
           <MenuItem key={s.id} value={s.id}>

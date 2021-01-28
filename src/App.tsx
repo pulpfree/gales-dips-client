@@ -8,22 +8,24 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { Helmet } from 'react-helmet'
 import { ThemeProvider } from '@material-ui/core/styles'
 import Amplify from 'aws-amplify'
-import client from './apollo'
-import theme from './style/theme'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@date-io/date-fns'
 
-import awsExports from './config/aws-exports'
+import { Alerts, AlertProvider } from './modules/Base/Alert'
 import { Dashboard } from './modules/Base/Dashboard'
 import { Dips } from './modules/Dips'
+import { ErrorAlert } from './modules/Base/Errors'
+import { getTitle } from './utils'
 import { Header } from './modules/Base/Header'
+import { Import } from './modules/Import'
 import { NoMatch } from './modules/Base/NoMatch'
 import { Propane } from './modules/Propane'
 import { Reports } from './modules/Reports'
-import { Import } from './modules/Import'
-import { getTitle } from './utils'
-import { useUserDispatch } from './modules/Base/User/UserContext'
-import { Alerts, AlertProvider } from './modules/Base/Alert'
-import { ErrorAlert } from './modules/Base/Errors'
 import { setToken } from './utils'
+import { useUserDispatch } from './modules/Base/User/UserContext'
+import awsExports from './config/aws-exports'
+import client from './apollo'
+import theme from './style/theme'
 
 Amplify.configure(awsExports)
 
@@ -74,14 +76,17 @@ export const App: React.FunctionComponent = () => {
             <Alerts />
             <Header />
             <ErrorBoundary FallbackComponent={ErrorAlert}>
-              <Switch>
-                <Route component={Dashboard} exact path='/' />
-                <Route component={Dips} exact path='/dips' />
-                <Route component={Propane} exact path='/propane' />
-                <Route component={Reports} exact path='/reports' />
-                <Route component={Import} exact path='/import-data' />
-                <Route component={NoMatch} path='*' />
-              </Switch>
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Switch>
+                  <Route component={Dashboard} exact path='/' />
+                  <Route component={Dips} exact path='/dips' />
+                  <Route component={Dips} path='/dips/:date/:stationID' />
+                  <Route component={Propane} exact path='/propane' />
+                  <Route component={Reports} exact path='/reports' />
+                  <Route component={Import} exact path='/import-data' />
+                  <Route component={NoMatch} path='*' />
+                </Switch>
+              </MuiPickersUtilsProvider>
             </ErrorBoundary>
           </Router>
         </AlertProvider>
