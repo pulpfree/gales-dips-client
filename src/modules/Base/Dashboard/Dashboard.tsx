@@ -7,10 +7,10 @@ import { Divider, Grid, Paper, Typography } from '@material-ui/core'
 import { DashButton } from './DashButton'
 import { LinkItems } from '../types'
 import useStyles from '../../../style/main'
-// import { later } from '../../../utils/test'
 import { PageTitle } from '../PageTitle'
 import { Loader } from '../Loader'
 import { ErrorAlert } from '../Errors'
+import { getEnv } from '../../../utils'
 
 const menuItems: LinkItems = [
   { label: 'Dip Entries', path: '/dips' },
@@ -44,6 +44,8 @@ export function Dashboard(): JSX.Element {
 
   if (error) return <ErrorAlert error={error} />
 
+  const DevWarnMsg = getEnv() !== 'production' && 'Warning: You are currently NOT in a production environment.'
+
   return (
     <>
       <Paper className={classes.paper}>
@@ -62,6 +64,7 @@ export function Dashboard(): JSX.Element {
             <Divider />
           </Grid>
         )}
+        <div style={{ margin: 20, fontWeight: 600, fontSize: '120%' }}>{DevWarnMsg}</div>
       </Paper>
     </>
   )

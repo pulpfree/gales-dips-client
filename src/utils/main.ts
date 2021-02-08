@@ -15,32 +15,38 @@ export const extractPathParts = (pathname: string, start = 2): Array<string> | n
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat
-/* export const fmtNumber = (number: number, decimal = 2, useGrouping = false, currency = false) => {
+export const fmtNumber = (number: number, decimal = 2, useGrouping = false, currency = false) => {
   if (number === undefined) return null
 
-  const opts = {
-    useGrouping,
-    minimumFractionDigits: decimal,
-    maximumFractionDigits: decimal,
-  }
+  let opts
   if (currency) {
-    opts.style = 'currency'
-    opts.currency = 'USD'
+    opts = {
+      style: 'currency',
+      currency: 'USD'
+    }
   }
   const formatter = new Intl.NumberFormat('en-US', opts)
   return formatter.format(number)
-} */
+}
 
 /* export const setOrderedFuelTypes =
   (fuelTypes, fuelTypeList) => fuelTypeList.filter(ft => fuelTypes.includes(ft))
 
 export const ucFirst = word => word.charAt(0).toUpperCase() + word.slice(1)
  */
-export function getEnv() {
-  if (window.location.hostname.indexOf('stage') > -1) {
+
+ export function getEnv() {
+   const nodeEnv = process.env.NODE_ENV
+   const { hostname } = window.location
+  if (window.location.hostname.indexOf('stage') > -1 || nodeEnv as string === 'stage') {
     return 'stage'
+  } else if (window.location.hostname === 'localhost' && nodeEnv) {
+    return nodeEnv
+  } else if (nodeEnv === 'production') {
+    return 'production'
+  } else {
+    return 'production'
   }
-  return process.env.NODE_ENV
 }
 
 export function getTitle() {

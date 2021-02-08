@@ -37,6 +37,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+/**
+ * Component to display an error alert
+ * @param error
+ */
 export const ErrorAlert = ({ error }: ErrorProps): JSX.Element => {
   const classes = useStyles()
 

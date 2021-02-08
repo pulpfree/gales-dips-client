@@ -24,8 +24,13 @@ const conf = {
 }
 const config = conf[getEnv()]
 
-// Constants
+/**
+ ====== Constants ======
+ */
 export const LOCAL_TOKEN_KEY = 'userToken'
+
+// Date Formats
 export const STD_DATE_FORMAT = 'yyyy-MM-dd'
+export const HUMAN_DATE_FORMAT = 'MMM d, yyy'
 
 export default config

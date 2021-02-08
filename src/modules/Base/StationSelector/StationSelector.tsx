@@ -6,7 +6,7 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { useQuery, gql } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 
-const GET_STATIONS = gql`
+export const GET_STATIONS = gql`
   query Stations {
     stations {
       id
@@ -47,9 +47,8 @@ export const StationSelector = ({ stationHandler }: SelectorProps): JSX.Element 
   React.useEffect(() => {
     if (stationID) {
       setStation(stationID)
-      stationHandler(stationID)
     }
-  }, [])
+  }, [stationID])
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error :(</p>

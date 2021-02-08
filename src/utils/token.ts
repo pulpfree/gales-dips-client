@@ -23,7 +23,7 @@ import { LOCAL_TOKEN_KEY } from '../config'
  * @param {object} cognitoUser session
  */
 function getSession(cognitoUser: CognitoUser): Promise<CognitoUserSession | null> {
-  console.log('cognitoUser: ', cognitoUser)
+  // console.log('cognitoUser: ', cognitoUser)
   return new Promise((resolve, reject) => {
     cognitoUser.getSession((err: Error, session: CognitoUserSession | null) => {
       if (err) reject(err)
@@ -80,7 +80,7 @@ export async function getToken(): Promise<any | null> {
 
   const tokenObj = parseLocalToken()
   if (tokenObj && cutoffTime < tokenObj.exp) {
-    console.log('returning local token') // eslint-disable-line no-console
+    // console.log('returning local token') // eslint-disable-line no-console
   }
   if (tokenObj && cutoffTime < tokenObj.exp) return storage.getItem(LOCAL_TOKEN_KEY)
 
@@ -88,10 +88,10 @@ export async function getToken(): Promise<any | null> {
     UserPoolId: process.env.REACT_APP_COGNITO_POOL_ID ? process.env.REACT_APP_COGNITO_POOL_ID : '',
     ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID ? process.env.REACT_APP_COGNITO_CLIENT_ID : '',
   }
-  console.log('process.env: ', process.env)
-  console.log('poolData: ', poolData)
+  // console.log('process.env: ', process.env)
+  // console.log('poolData: ', poolData)
   const userPool = new CognitoUserPool(poolData)
-  console.log('userPool: ', userPool)
+  // console.log('userPool: ', userPool)
   const cognitoUser: CognitoUser = userPool.getCurrentUser()! // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
   const session = await getSession(cognitoUser)

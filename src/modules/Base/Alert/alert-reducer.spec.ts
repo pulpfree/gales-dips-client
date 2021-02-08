@@ -1,3 +1,8 @@
+/**
+ * alert-reducer.spec.ts
+ * Got inspiration for this from: https://kentcdodds.com/blog/how-to-test-custom-react-hooks
+ */
+
 import { renderHook, act } from '@testing-library/react-hooks'
 import { nanoid } from 'nanoid'
 import { AlertItem, useAlert } from './alert-reducer'

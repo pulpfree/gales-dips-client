@@ -1,20 +1,21 @@
 import React from 'react'
 
-import { Icon, IconButton, FormControl } from '@material-ui/core'
+import { Grid, Icon, IconButton, FormControl } from '@material-ui/core'
 import { KeyboardDatePicker } from '@material-ui/pickers'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { addDays, subDays, format, toDate } from 'date-fns'
-import { useLazyQuery } from '@apollo/client'
+import { addDays, subDays, format } from 'date-fns'
 import { useHistory, useParams } from 'react-router-dom'
+import { utcToZonedTime } from 'date-fns-tz'
 
 import { ContentContainer } from '../Base/ContentContainer'
-import { FUEL_SALE_LATEST, STATION_TANK_QUERY } from './queries'
+import { HUMAN_DATE_FORMAT, STD_DATE_FORMAT } from '../../config'
+import { ImportDataLink } from './ImportDataLink'
 import { Loader } from '../Base/Loader'
 import { PageTitle } from '../Base/PageTitle'
 import { StationSelector } from '../Base/StationSelector'
-import { STD_DATE_FORMAT } from '../../config'
-
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz'
+import { useAlertDispatch } from '../Base/Alert'
+import { useDips } from './useDips'
+import { DipsForm } from './DipsForm'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,114 +49,102 @@ const useStyles = makeStyles((theme: Theme) =>
 export function Dips(): JSX.Element {
   const classes = useStyles()
   const history = useHistory()
-  // const params = useParams()
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date())
+  const alertDispatch = useAlertDispatch()
   const [nextDisabled, setNextDisabled] = React.useState<boolean>(true)
-  const [stationID, setStationID] = React.useState<string>('')
-
-  const [getTanks, { loading: tanksLoading, data: tanksData }] = useLazyQuery(STATION_TANK_QUERY)
-  const [getFuelSale, { loading: fuelSaleLoading, data: fuelSaleData }] = useLazyQuery(FUEL_SALE_LATEST)
-
-  // console.log('fuelSaleData: ', fuelSaleData)
-  // console.log('fuelSaleLoading: ', fuelSaleLoading)
-  // console.log('tanksData: ', tanksData)
-  // console.log('tanksLoading: ', tanksLoading)
+  const { date: pDate, stationID: pStationID } = useParams<{ date: string; stationID: string }>()
+  const {
+    date,
+    dipTankData,
+    error,
+    haveCurrentDips,
+    loading,
+    fuelSaleDate,
+    stationID,
+    setDate,
+    setStationID,
+  } = useDips()
 
   const handleNextPrevDate = (val: string) => {
-    const dte = selectedDate as Date
+    const dte = date as Date
     if (val === 'p') {
-      setSelectedDate(subDays(dte, 1))
+      setDate(subDays(dte, 1))
     } else if (val === 'n') {
-      setSelectedDate(addDays(dte, 1))
+      setDate(addDays(dte, 1))
     }
   }
 
-  const { date, stationID: stnID } = useParams<{ date: string; stationID: string }>()
+  // Check for url parameters and set
   React.useEffect(() => {
-    if (!stationID) {
-      setStationID(stnID)
+    if (pDate && pStationID) {
+      setDate(utcToZonedTime(new Date(pDate), 'Europe/London'))
+      setStationID(pStationID)
     }
-    console.log('selectedDate: ', selectedDate)
-    if (date) {
-      console.log('date to set on refresh: ', date)
-      const dte = new Date(date)
-      console.log('dte: ', dte)
-      const toDte = toDate(new Date(date))
-      console.log('toDte: ', toDte)
-      const timeZone = 'Europe/Berlin'
-      const zonedDate = utcToZonedTime(dte, timeZone)
-      console.log('zonedDate: ', zonedDate)
-      setSelectedDate(zonedDate)
-    }
-    // console.log('date: ', date)
-    // console.log('stationID: ', stnID)
-  }, [])
+  }, [pDate, pStationID, setDate, setStationID])
 
+  const dte = date as Date
   React.useEffect(() => {
     const handleSetNextDisable = () => {
-      const dte = selectedDate as Date
-      const selectDteFmt = Number(format(dte, 'yyyyMd'))
-      const todayFmt = Number(format(new Date(), 'yyyyMd'))
+      const selectDteFmt = Number(format(dte, 'yyyyMMdd'))
+      const todayFmt = Number(format(new Date(), 'yyyyMMdd'))
       const isPast = selectDteFmt >= todayFmt
       setNextDisabled(isPast)
     }
     handleSetNextDisable()
-    console.log('stationID: ', stationID)
     if (stationID) {
-      // TODO: create method for below as it's now repeated
-      const dte = format(selectedDate as Date, STD_DATE_FORMAT)
-      const uri = `/dips/${dte}/${stationID}`
+      const fmtDte = format(dte, STD_DATE_FORMAT)
+      const uri = `/dips/${fmtDte}/${stationID}`
       history.push(uri)
     }
-  }, [selectedDate as Date])
-
-  // console.log('stationID in Dips: ', stationID)
+  }, [dte, history, stationID])
 
   React.useEffect(() => {
-    if (stationID) {
-      console.log('fetch tanks and fuel in Dips useEffect')
-      getTanks({ variables: { stationID } })
-      getFuelSale({ variables: { stationID } })
-      // set params
-      // const dte = format(selectedDate as Date, STD_DATE_FORMAT)
-      // const uri = `/dips/${dte}/${stationID}`
-      // history.push(uri)
+    if (error) {
+      alertDispatch.send({ message: error, severity: 'error', setTimeout: false, title: 'Data Error' })
     }
-  }, [stationID])
+  }, [alertDispatch, error])
 
   return (
     <ContentContainer>
       <PageTitle title='Dip Entries' />
-      <div>
-        <FormControl className={classes.formControl}>
-          <StationSelector stationHandler={setStationID} />
-        </FormControl>
 
-        <FormControl className={classes.formControl}>
-          <KeyboardDatePicker
-            autoOk
-            disableFuture
-            format='MMM d, yyy'
-            label='Date'
-            onChange={setSelectedDate}
-            value={selectedDate}
-          />
-        </FormControl>
+      <Grid container spacing={3} style={{ maxWidth: 550 }}>
+        <Grid item xs={4}>
+          <FormControl className={classes.formControl}>
+            <StationSelector stationHandler={setStationID} />
+          </FormControl>
+        </Grid>
 
-        <FormControl className={classes.navControl}>
-          <IconButton className={classes.navButton} onClick={() => handleNextPrevDate('p')}>
-            <Icon className={classes.navIcon} fontSize='large'>
-              arrow_back_ios
-            </Icon>
-          </IconButton>
-          <IconButton className={classes.navButton} disabled={nextDisabled} onClick={() => handleNextPrevDate('n')}>
-            <Icon className={classes.navIcon} fontSize='large'>
-              arrow_forward_ios
-            </Icon>
-          </IconButton>
-        </FormControl>
-      </div>
-      {(tanksLoading || fuelSaleLoading) && <Loader />}
+        <Grid item xs={4}>
+          <FormControl className={classes.formControl} style={{ width: 160 }}>
+            <KeyboardDatePicker
+              autoOk
+              disableFuture
+              format={HUMAN_DATE_FORMAT}
+              label='Date'
+              onChange={setDate}
+              value={date}
+            />
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={4}>
+          <FormControl className={classes.navControl}>
+            <IconButton className={classes.navButton} onClick={() => handleNextPrevDate('p')}>
+              <Icon className={classes.navIcon} fontSize='large'>
+                arrow_back_ios
+              </Icon>
+            </IconButton>
+            <IconButton className={classes.navButton} disabled={nextDisabled} onClick={() => handleNextPrevDate('n')}>
+              <Icon className={classes.navIcon} fontSize='large'>
+                arrow_forward_ios
+              </Icon>
+            </IconButton>
+          </FormControl>
+        </Grid>
+      </Grid>
+      {loading && <Loader />}
+      {!haveCurrentDips && !loading && fuelSaleDate && <ImportDataLink date={fuelSaleDate} />}
+      {haveCurrentDips && !loading && dipTankData && <DipsForm data={dipTankData} />}
     </ContentContainer>
   )
 }

@@ -110,7 +110,7 @@ describe('setEnv', () => {
     const env = getEnv()
     expect(env).toEqual('stage')
   })
-
+  
   it('return test environment', () => {
     // @ts-ignore
     process.env.NODE_ENV = 'production'
