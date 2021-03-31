@@ -1,4 +1,4 @@
-import { Dip, DipsData, StationTanks, TankIndex, DipTankData, TankDip, FuelTypes } from './types'
+import { Dip, DipsData, DipTankData, FuelTypes, StationTanksT, TankIndex, TankDip, TankLevelsT } from './types'
 
 const tmpTank = {
   delivery: null,
@@ -10,7 +10,7 @@ const tmpTank = {
   tankID: null,
 }
 
-export const populateTanks = (dips: DipsData, tanks: StationTanks): DipTankData => {
+export const populateTanks = (dips: DipsData, tanks: StationTanksT): DipTankData => {
   const { curDips, prevDips } = dips
   const tanksObj = new Map<TankIndex, TankDip>()
 
@@ -25,7 +25,8 @@ export const populateTanks = (dips: DipsData, tanks: StationTanks): DipTankData 
           const tmpDip = curDips.find((ele: Dip) => t.id === ele.stationTankID)
           if (tmpDip) {
             tmp.dips = tmpDip
-            tmp.tankID = `${t.tank.size}(${t.tankID}) ${tmpDip.fuelType}`
+            tmp.tankID = t.tankID
+            tmp.tankLabel = `${t.tank.size}(${t.tankID}) ${tmpDip.fuelType}`
             tmp.level = tmpDip.level
             tmp.litres = tmpDip.litres
             if (tmpDip.fuelDelivery) {
@@ -45,4 +46,22 @@ export const populateTanks = (dips: DipsData, tanks: StationTanks): DipTankData 
     }
   }
   return tanksObj
+}
+
+/**
+ * setLevels function - Sets levels for tank
+ * @param tanks
+ * @returns TanksT
+ */
+export const setLevels = (tanks: StationTanksT): TankLevelsT => {
+  const ret: TankLevelsT = {}
+
+  tanks.forEach((t) => {
+    const keys = Object.keys(ret)
+    if (!keys.includes(t.tankID)) {
+      ret[t.tankID] = t.tank.levels
+    }
+  })
+
+  return ret
 }

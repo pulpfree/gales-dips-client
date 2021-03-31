@@ -1,4 +1,5 @@
 
 Todo:
-  ✔ Setup eslint https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project @done(20-12-28 17:01)
+  ☐ refactor dips-reducer for cleaner data
+  ☐ add methods in dips-reducer to handle form fields
   ☐ Finish UserContext tests

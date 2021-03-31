@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks'
 import { subDays } from 'date-fns'
 
-import { useDips } from './useDips'
+import { useDips } from './dips-reducer'
 
 // const stationID = '64493efb-faeb-4a80-9051-6a025ecb6347'
 const date = new Date()

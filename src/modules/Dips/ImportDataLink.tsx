@@ -1,14 +1,11 @@
-import React from 'react'
+import * as React from 'react'
 
 import { format } from 'date-fns'
 import { Button, Typography } from '@material-ui/core'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 
 import { HUMAN_DATE_FORMAT } from '../../config'
-
-interface ImportProps {
-  date: Date
-}
+import { useDipsDispatch } from './DipsContext'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,9 +16,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-export const ImportDataLink = ({ date }: ImportProps): JSX.Element => {
+export const ImportDataLink = (): JSX.Element => {
+  const { haveCurrentDips, loading, fuelSaleDate } = useDipsDispatch()
   const classes = useStyles()
-  const fmtDte = format(new Date(date), HUMAN_DATE_FORMAT)
+
+  if (haveCurrentDips || loading || !fuelSaleDate) {
+    return <div />
+  }
+  const fmtDte = format(new Date(fuelSaleDate), HUMAN_DATE_FORMAT)
 
   return (
     <div className={classes.container}>

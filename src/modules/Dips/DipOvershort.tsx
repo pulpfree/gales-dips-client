@@ -35,7 +35,7 @@ export const DipOvershort = ({ data }: OSProps): JSX.Element => {
   let displayDate
 
   const fts = Object.values(FuelTypes)
-  const oss = data.overshort.overShort
+  const oss = data.overshort?.overShort
   const rows = []
   if (oss) {
     for (let i = 0; i < fts.length; i++) {

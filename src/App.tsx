@@ -13,7 +13,8 @@ import DateFnsUtils from '@date-io/date-fns'
 
 import { Alerts, AlertProvider } from './modules/Base/Alert'
 import { Dashboard } from './modules/Base/Dashboard'
-import { Dips } from './modules/Dips'
+import { Dips as DipsCont } from './modules/Dips'
+import { DipsProvider } from './modules/Dips/DipsContext'
 import { ErrorAlert } from './modules/Base/Errors'
 import { getTitle } from './utils'
 import { Header } from './modules/Base/Header'
@@ -41,6 +42,12 @@ export const App: React.FunctionComponent = () => {
    * see: https://stackoverflow.com/questions/36607979/how-to-get-around-property-does-not-exist-on-object/45090885
    * and: https://stackoverflow.com/questions/43338763/typescript-property-does-not-exist-on-type-object
    */
+
+  const Dips = () => (
+    <DipsProvider>
+      <DipsCont />
+    </DipsProvider>
+  )
 
   const [authData, setAuthData] = React.useState<any | undefined>() // eslint-disable-line @typescript-eslint/no-explicit-any
   const userDispatch = useUserDispatch()

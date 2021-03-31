@@ -14,8 +14,8 @@ import { Loader } from '../Base/Loader'
 import { PageTitle } from '../Base/PageTitle'
 import { StationSelector } from '../Base/StationSelector'
 import { useAlertDispatch } from '../Base/Alert'
-import { useDips } from './useDips'
 import { DipsForm } from './DipsForm'
+import { useDipsDispatch } from './DipsContext'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,9 +60,10 @@ export function Dips(): JSX.Element {
     loading,
     fuelSaleDate,
     stationID,
+    tankLevels,
     setDate,
     setStationID,
-  } = useDips()
+  } = useDipsDispatch()
 
   const handleNextPrevDate = (val: string) => {
     const dte = date as Date
@@ -143,8 +144,8 @@ export function Dips(): JSX.Element {
         </Grid>
       </Grid>
       {loading && <Loader />}
-      {!haveCurrentDips && !loading && fuelSaleDate && <ImportDataLink date={fuelSaleDate} />}
-      {haveCurrentDips && !loading && dipTankData && <DipsForm data={dipTankData} />}
+      <ImportDataLink />
+      {haveCurrentDips && !loading && dipTankData && <DipsForm />}
     </ContentContainer>
   )
 }

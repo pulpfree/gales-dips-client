@@ -2,6 +2,10 @@
  * Typescript interace and type definitions for the Dips module
  */
 
+export interface FieldValuesI {
+  [key: string]: number | string
+}
+
 interface TankOverShort {
   fuelType: string
   tankLitres: number
@@ -19,7 +23,6 @@ export interface Overshort {
 type FuelDelivery = {
   litres: number
 }
-
 export interface Dip {
   date: number
   fuelDelivery?: FuelDelivery | null
@@ -36,7 +39,7 @@ interface FuelPrice {
 }
 
 export interface OvershortData {
-  overshort: Overshort
+  overshort?: Overshort
   fuelPrice: FuelPrice
 }
 
@@ -50,8 +53,8 @@ export type TankIndex = string
 export type DipTankData = Map<TankIndex, TankDip>
 
 export interface DipFormData {
-  dipTanks: DipTankData
-  overshort: OvershortData
+  tankData: DipTankData
+  osData: OvershortData
 }
 
 export enum FuelTypes {
@@ -78,7 +81,7 @@ interface StationTank {
   tankID: string
 }
 
-export type StationTanks = StationTank[]
+export type StationTanksT = StationTank[]
 
 export interface TankDip {
   delivery: number | null
@@ -88,4 +91,7 @@ export interface TankDip {
   prevDips: Dip
   prevLevel: number | null
   tankID: string
+  tankLabel: string
 }
+
+export type TankLevelsT = Record<string, Record<string, TankLevel>>

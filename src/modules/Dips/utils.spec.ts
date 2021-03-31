@@ -2,10 +2,10 @@
  * Dips utilities file
  */
 
-// Test this file only: yarn test src/modules/Dips/utils.spec.ts
+// Test this file only: yarn test src/modules/Dips/utils
 
 import { dips, stationData } from './mockData'
-import { populateTanks } from './utils'
+import { populateTanks, setLevels } from './utils'
 import { TankDip } from './types'
 
 const dipResult: TankDip = {
@@ -28,13 +28,22 @@ const dipResult: TankDip = {
     stationTankID: 'f2a1e74d-2140-46e5-abc0-938fa5a1ed8d',
   },
   prevLevel: 98,
-  tankID: '15000(9A) DSL',
+  tankID: '9A',
+  tankLabel: '15000(9A) DSL',
 }
 
-describe('Parse dips data', () => {
+describe('populateTanks function', () => {
   it('returns populated tanks', () => {
     const stationTankID = 'f2a1e74d-2140-46e5-abc0-938fa5a1ed8d'
     const ds = populateTanks(dips, stationData.stationTanks)
     expect(ds.get(stationTankID)).toEqual(dipResult)
+  })
+})
+
+describe('setLevels function', () => {
+  it('sets tank levels', () => {
+    const tank9a = stationData.stationTanks.find((t) => (t.tankID = '9a'))
+    const ret = setLevels(stationData.stationTanks)
+    expect(ret['9a']).toEqual(tank9a?.tank.levels)
   })
 })
