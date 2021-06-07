@@ -20,7 +20,7 @@ import classNames from 'classnames'
 import { DipOvershort } from './DipOvershort'
 import { fmtNumber } from '../../utils'
 import { useDipsDispatch } from './DipsContext'
-import { DipFormData } from './types'
+import { IDipFormData } from './types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,50 +58,20 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const DipsForm = (): JSX.Element => {
   const classes = useStyles()
-  const [litres, setLitres] = React.useState<Record<string, number>>({})
 
-  const { dipTankData: tmpData, tankLevels } = useDipsDispatch()
+  const { tanksData, dipsData: tmpData, tankLevels, setTankDataField } = useDipsDispatch()
 
-  const dipTankData = tmpData as DipFormData
+  const dipTankData = tmpData as IDipFormData
   const { osData, tankData } = dipTankData
 
   const dataKeys = Array.from(tankData.keys())
 
-  console.log('tankData: ', tankData)
-
-  // type FieldVals = Record<string, LitresObjI>
-
-  /* const defaultValues: FieldValsI = React.useMemo(() => {
-    console.log('setting fieldValues')
-
-    const dataKeys = Array.from(tankData.keys())
-    // const fieldVals: FieldVals = {}
-    const ret: FieldValsI = {}
-
-    dataKeys.forEach((k) => {
-      ret[`${k}_delivery`] = tankData.get(k)?.delivery ?? 0
-      ret[`${k}_level`] = tankData.get(k)?.level ?? 0
-      ret[`${k}_litres`] = tankData.get(k)?.litres ?? 0
-      // delivery: tankData.get(k)?.delivery ?? 0,
-      // level: tankData.get(k)?.level ?? 0,
-      // litres: tankData.get(k)?.litres ?? 0,
-      // }
-    })
-    return ret
-  }, [tankData])
-  console.log('defaultValues: ', defaultValues) */
-
-  // eslint-disable-next-line
-  const handleBlur = (e: any): void => {
+  const handleBlur: React.FocusEventHandler<HTMLInputElement> = (e): void => {
     e.persist()
-    const fieldNm = e.target.name
     const [tankID] = e.target.id.split('_')
-    const ltrFieldNm = `${tankID}_litres`
     const val = e.target.value
 
-    if (!val) return
     let inputLevel = Number(val)
-    // const origLevel = Number(val.slice())
     if (inputLevel <= 1) return
 
     // Here we're simply ensuring that the tank level exists, some tanks have only 'even' numbered levels
@@ -110,45 +80,29 @@ export const DipsForm = (): JSX.Element => {
 
     if (inputLevel > 9 && !levels[inputLevel]) {
       inputLevel--
-      // setValue(fieldNm, inputLevel)
     }
 
-    const litres = levels[inputLevel].litres
+    const litres = levels[inputLevel]?.litres || false
     if (!litres) {
-      // this.props.setFieldValue(`tanks.${tankID}.level`, origLevel, false) // Don't see the need for this
-      // this.props.setFieldError([`${tankID}_level`], 'Invalid field level')
+      //TODO: set error here
+      const origLevel = tankData.get(tankID)?.dips.level as number
+      setTankDataField(tankID, 'level', origLevel)
       return
     }
 
-    const fmtLitres = fmtNumber(litres, 0, true)
-    // setValue(ltrFieldNm, fmtLitres)
-    setLitres((state) => {
-      const newState = { ...state, [tankID]: litres }
-      return newState
-    })
+    setTankDataField(tankID, 'litres', litres)
   }
 
-  // const onSubmit = (data: any) => console.log('formData: ', data)
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e): void => {
+    const [tankID, field] = e.target.id.split('_')
+    setTankDataField(tankID, field, Number(e.target.value))
+  }
 
-  /* interface LitresObjI {
-    [key: string]: number
-  } */
+  const handleSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault()
 
-  /* React.useEffect(() => {
-    console.log('run effect once')
-
-    const retLtrs: LitresObjI = {}
-
-    dataKeys.forEach((k) => {
-      retLtrs[`${k}`] = tankData.get(k)?.litres ?? 0
-      fieldVals[k] = {
-        level: tankData.get(k)?.level ?? 0,
-      }
-    })
-    // setLitres(retLtrs)
-  }, [dataKeys, tankData]) */
-
-  // console.log('litres: ', litres)
+    console.log('tanksData: ', tanksData)
+  }
 
   return (
     <div className={classes.container}>
@@ -156,7 +110,7 @@ export const DipsForm = (): JSX.Element => {
         <Grid item xs={6}>
           <Typography variant='h6'>Dips</Typography>
 
-          <form autoComplete='off'>
+          <form autoComplete='off' onSubmit={handleSubmit}>
             <TableContainer component={Paper}>
               <Table className={classes.table} aria-label='dips table' size='small'>
                 <TableHead>
@@ -177,30 +131,30 @@ export const DipsForm = (): JSX.Element => {
                         <TextField
                           autoFocus={i === 0}
                           className={classes.input}
-                          // defaultValue={tankData.get(k)?.level || 0}
-                          value={tankData.get(k)?.level || 0}
                           id={`${k}_level`}
                           margin='dense'
                           name={`${k}_level`}
                           onBlur={handleBlur}
+                          onChange={handleChange}
                           type='number'
+                          value={tanksData.get(k)?.level}
                           variant='outlined'
                         />
-                        {tankData.get(k)?.level}
                       </TableCell>
 
                       <TableCell align='right' className={classes.inputLitres}>
-                        {fmtNumber(litres[k] as number, 0, true)}
+                        {fmtNumber(tanksData.get(k)?.litres as number, 0, true)}
                       </TableCell>
 
                       <TableCell>
                         <TextField
                           className={classes.inputWide}
-                          defaultValue={tankData.get(k)?.delivery || 0}
                           id={`${k}_delivery`}
-                          name={`${k}_delivery`}
                           margin='dense'
+                          name={`${k}_delivery`}
+                          onChange={handleChange}
                           type='number'
+                          value={tanksData.get(k)?.delivery}
                           variant='outlined'
                         />
                       </TableCell>

@@ -1,5 +1,10 @@
 
 Todo:
-  ☐ refactor dips-reducer for cleaner data
   ☐ add methods in dips-reducer to handle form fields
+  ☐ refactor dips-reducer for cleaner data
   ☐ Finish UserContext tests
+
+ToDoDipsForm:
+  ✔ Complete handleBlur to accommodate new "setDipLevel" method @started(21-06-07 11:16) @done(21-06-07 15:57) @lasted(4h41m52s)
+  ☐ create error functionality
+  

@@ -52,18 +52,7 @@ export function Dips(): JSX.Element {
   const alertDispatch = useAlertDispatch()
   const [nextDisabled, setNextDisabled] = React.useState<boolean>(true)
   const { date: pDate, stationID: pStationID } = useParams<{ date: string; stationID: string }>()
-  const {
-    date,
-    dipTankData,
-    error,
-    haveCurrentDips,
-    loading,
-    fuelSaleDate,
-    stationID,
-    tankLevels,
-    setDate,
-    setStationID,
-  } = useDipsDispatch()
+  const { date, dipsData, error, haveCurrentDips, loading, stationID, setDate, setStationID } = useDipsDispatch()
 
   const handleNextPrevDate = (val: string) => {
     const dte = date as Date
@@ -143,9 +132,10 @@ export function Dips(): JSX.Element {
           </FormControl>
         </Grid>
       </Grid>
+
       {loading && <Loader />}
       <ImportDataLink />
-      {haveCurrentDips && !loading && dipTankData && <DipsForm />}
+      {haveCurrentDips && !loading && dipsData && <DipsForm />}
     </ContentContainer>
   )
 }

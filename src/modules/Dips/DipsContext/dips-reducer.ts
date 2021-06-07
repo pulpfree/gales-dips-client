@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { isAfter, subDays, format, parse } from 'date-fns'
+import { subDays, format, parse } from 'date-fns'
 import { useLazyQuery } from '@apollo/client'
 
 import { DIP_QUERY, STATION_INFO } from '../queries'
-import { DipFormData, FieldValuesI, Overshort, TankLevelsT } from '../types'
-import { populateTanks, setLevels } from '../utils'
+import { IDipFormData, IFieldValues, IOvershort, ITankData, TTanksMap, TankLevelsT } from '../types'
+import { getTanksData, populateTanks, setLevels } from '../utils'
 
 const SET_CURRENT_QKEY = 'SET_CURRENT_QKEY'
 const SET_DATE = 'SET_DATE'
@@ -15,6 +15,7 @@ const SET_FUELSALE_DATE = 'SET_FUELSALE_DATE'
 const SET_HAVE_CURRENT_DIPS = 'SET_HAVE_CURRENT_DIPS'
 const SET_LOADING = 'SET_LOADING'
 const SET_STATIONID = 'SET_STATIONID'
+const SET_TANK_DATA = 'SET_TANK_DATA'
 const SET_TANK_LEVELS = 'SET_TANK_LEVELS'
 
 type DateType = Date | null
@@ -22,12 +23,13 @@ type DateType = Date | null
 export type DipState = {
   currentQKey: string
   date: DateType
-  dipTankData?: DipFormData
+  dipsData?: IDipFormData
   error: string
   fuelSaleDate?: Date
   haveCurrentDips: boolean
   loading: boolean
   stationID: string
+  tanksData: TTanksMap
   tankLevels: TankLevelsT
 }
 
@@ -42,7 +44,7 @@ type Action =
     }
   | {
       type: 'SET_DIPS_TANK_DATA'
-      payload: DipFormData
+      payload: IDipFormData
     }
   | {
       type: 'SET_ERROR'
@@ -52,7 +54,7 @@ type Action =
       type: 'SET_FIELD'
       payload: {
         field: string
-        value: FieldValuesI
+        value: IFieldValues
       }
     }
   | {
@@ -72,53 +74,52 @@ type Action =
       payload: string
     }
   | {
+      type: 'SET_TANK_DATA'
+      payload: TTanksMap
+    }
+  | {
       type: 'SET_TANK_LEVELS'
       payload: TankLevelsT
     }
 
 export interface DipType extends DipState {
   setDate: (date: DateType) => void
+  setTankDataField: (stationID: string, field: string, value: number) => void
   setStationID: (stationID: string) => void
 }
 
 const dipsReducer = (state: DipState, action: Action): DipState => {
   switch (action.type) {
-    case SET_DATE: {
-      return { ...state, date: action.payload }
-    }
-
-    case SET_ERROR: {
-      return { ...state, error: action.payload }
-    }
-
-    case SET_STATIONID: {
-      return { ...state, stationID: action.payload }
-    }
-
-    case SET_LOADING: {
-      return { ...state, loading: action.payload }
-    }
-
-    case SET_FUELSALE_DATE: {
-      return { ...state, fuelSaleDate: action.payload }
-    }
-
-    case SET_DIPS_TANK_DATA: {
-      return { ...state, dipTankData: action.payload }
-    }
-
-    case SET_HAVE_CURRENT_DIPS: {
-      return { ...state, haveCurrentDips: action.payload }
-    }
-
     case SET_CURRENT_QKEY: {
       return { ...state, currentQKey: action.payload }
     }
-
+    case SET_DATE: {
+      return { ...state, date: action.payload }
+    }
+    case SET_DIPS_TANK_DATA: {
+      return { ...state, dipsData: action.payload }
+    }
+    case SET_ERROR: {
+      return { ...state, error: action.payload }
+    }
+    case SET_FUELSALE_DATE: {
+      return { ...state, fuelSaleDate: action.payload }
+    }
+    case SET_HAVE_CURRENT_DIPS: {
+      return { ...state, haveCurrentDips: action.payload }
+    }
+    case SET_LOADING: {
+      return { ...state, loading: action.payload }
+    }
+    case SET_STATIONID: {
+      return { ...state, stationID: action.payload }
+    }
+    case SET_TANK_DATA: {
+      return { ...state, tanksData: action.payload }
+    }
     case SET_TANK_LEVELS: {
       return { ...state, tankLevels: action.payload }
     }
-
     default:
       throw new Error('Unhandled action type')
   }
@@ -131,6 +132,7 @@ const initialState = {
   haveCurrentDips: false,
   loading: false,
   stationID: '',
+  tanksData: new Map(),
   tankLevels: {},
 }
 
@@ -151,14 +153,33 @@ export const useDips = (): DipType => {
     [getTanks],
   )
 
+  const setTankDataField = React.useCallback(
+    (stationID, field, value) => {
+      const td = state.tanksData.get(stationID)
+      const newTd = { ...td, [field]: value } as ITankData
+      state.tanksData.set(stationID, newTd)
+      dispatch({ type: SET_TANK_DATA, payload: state.tanksData })
+    },
+    [state.tanksData],
+  )
+
+  /**
+   * Set tanksLoading flag
+   */
   React.useEffect(() => {
     dispatch({ type: SET_LOADING, payload: tanksLoading })
   }, [tanksLoading])
 
+  /**
+   * Set dipsLoading flag
+   */
   React.useEffect(() => {
     dispatch({ type: SET_LOADING, payload: dipsLoading })
   }, [dipsLoading])
 
+  /**
+   * Call to getTanks if we have fuelSaleLatest date and stationID
+   */
   React.useEffect(() => {
     const fsDate = stationData?.fuelSaleLatest.date
     if (fsDate) {
@@ -170,12 +191,20 @@ export const useDips = (): DipType => {
     }
   }, [stationID, stationData, getTanks])
 
+  /**
+   * Set haveCurrentDips boolean value based on date and fuelSaleDate (from query return)
+   */
   React.useEffect(() => {
     if (date && fuelSaleDate) {
-      dispatch({ type: SET_HAVE_CURRENT_DIPS, payload: !isAfter(date, fuelSaleDate) })
+      const fsDte = format(fuelSaleDate, 'yyyyLLdd')
+      const curDte = format(date, 'yyyyLLdd')
+      dispatch({ type: SET_HAVE_CURRENT_DIPS, payload: curDte <= fsDte })
     }
   }, [date, fuelSaleDate])
 
+  /**
+   * Set error if we encounter a dips or tank query error
+   */
   React.useEffect(() => {
     if (dipsError || tanksError) {
       const errMsg = 'An error has occurred with the dips data. Please report this to the administrator'
@@ -216,28 +245,32 @@ export const useDips = (): DipType => {
     }
   }, [])
 
+  /**
+   * Populate dipsData, dipLevels and tankLevels when station or date changes
+   */
   React.useEffect(() => {
     if (dipsData) {
       const findDate = Number(format(date as Date, 'yyyyMMdd'))
-      const overshort = dipsData.dipOverShortRange.find((ele: Overshort) => ele.date === findDate)
+      const overshort = dipsData.dipOverShortRange.find((ele: IOvershort) => ele.date === findDate)
       if (dipsData && stationData?.stationTanks && overshort) {
-        const tankData = populateTanks(dipsData, stationData.stationTanks)
         const tankLevels = setLevels(stationData.stationTanks)
-        const { fuelPrice } = dipsData
+        dispatch({ type: SET_TANK_LEVELS, payload: tankLevels })
 
-        const dipTankData: DipFormData = {
-          tankData,
+        const { fuelPrice } = dipsData
+        dispatch({ type: SET_TANK_DATA, payload: getTanksData(dipsData, stationData.stationTanks) })
+
+        const dipTankData: IDipFormData = {
+          tankData: populateTanks(dipsData, stationData.stationTanks),
           osData: {
             overshort,
             fuelPrice,
           },
         }
         dispatch({ type: SET_DIPS_TANK_DATA, payload: dipTankData })
-        dispatch({ type: SET_TANK_LEVELS, payload: tankLevels })
       }
     }
   }, [date, dipsData, stationData])
 
-  console.log('state: ', state)
-  return { setDate, setStationID, ...state }
+  // console.log('state: ', state)
+  return { setDate, setTankDataField, setStationID, ...state }
 }

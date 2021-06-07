@@ -5,7 +5,7 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { format, parse } from 'date-fns'
 
-import { FuelTypes, OvershortData } from './types'
+import { FuelTypes, IOvershortData } from './types'
 import { fmtNumber } from '../../utils'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface OSProps {
-  data: OvershortData
+  data: IOvershortData
 }
 
 export const DipOvershort = ({ data }: OSProps): JSX.Element => {

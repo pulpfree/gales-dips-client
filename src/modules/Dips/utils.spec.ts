@@ -6,9 +6,9 @@
 
 import { dips, stationData } from './mockData'
 import { populateTanks, setLevels } from './utils'
-import { TankDip } from './types'
+import { ITankDip } from './types'
 
-const dipResult: TankDip = {
+const dipResult: ITankDip = {
   delivery: 1700,
   dips: {
     date: 20210125,

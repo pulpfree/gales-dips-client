@@ -2,59 +2,65 @@
  * Typescript interace and type definitions for the Dips module
  */
 
-export interface FieldValuesI {
+export interface IFieldValues {
   [key: string]: number | string
 }
 
-interface TankOverShort {
+interface ITankOverShort {
   fuelType: string
   tankLitres: number
   overShort: number
   litresSold: number
 }
-type TankOverShorts = Record<string, TankOverShort>
+type TTankOverShorts = Record<string, ITankOverShort>
 
-export interface Overshort {
+export interface IOvershort {
   date: number
-  overShort: TankOverShorts
+  overShort: TTankOverShorts
   stationID: string
 }
 
-type FuelDelivery = {
+type TFuelDelivery = {
   litres: number
 }
-export interface Dip {
+export interface IDip {
   date: number
-  fuelDelivery?: FuelDelivery | null
+  fuelDelivery?: TFuelDelivery | null
   fuelType: string
   level: number
   litres: number
   stationTankID: string
 }
 
-interface FuelPrice {
+interface IFuelPrice {
   date: number
   price: number
   stationID: string
 }
 
-export interface OvershortData {
-  overshort?: Overshort
-  fuelPrice: FuelPrice
+export interface IOvershortData {
+  overshort?: IOvershort
+  fuelPrice: IFuelPrice
 }
 
-export interface DipsData extends OvershortData {
-  curDips: Dip[]
-  prevDips: Dip[]
+export interface IDipsData extends IOvershortData {
+  curDips: IDip[]
+  prevDips: IDip[]
 }
 
-export type TankIndex = string
+export type TTankIndex = string
 
-export type DipTankData = Map<TankIndex, TankDip>
+export interface ITankData {
+  delivery: number
+  level: number
+  litres: number
+}
 
-export interface DipFormData {
-  tankData: DipTankData
-  osData: OvershortData
+export type TTanksMap = Map<TTankIndex, ITankData>
+
+export interface IDipFormData {
+  tankData: TDipTanksMap
+  osData: IOvershortData
 }
 
 export enum FuelTypes {
@@ -64,34 +70,35 @@ export enum FuelTypes {
   CDSL = 'CDSL',
 }
 
-type TankLevel = {
+type TTankLevel = {
   litres: number
   level: number
 }
 
-interface Tank {
-  levels: Record<symbol, TankLevel>
+interface ITank {
+  levels: Record<symbol, TTankLevel>
   size: number
 }
 
-interface StationTank {
+interface IStationTank {
   fuelType: string
   id: string
-  tank: Tank
+  tank: ITank
   tankID: string
 }
 
-export type StationTanksT = StationTank[]
+export type TStationTanks = IStationTank[]
 
-export interface TankDip {
+export type TDipTanksMap = Map<TTankIndex, ITankDip>
+export interface ITankDip {
   delivery: number | null
-  dips: Dip
+  dips: IDip
   level: number
   litres: number | null
-  prevDips: Dip
+  prevDips: IDip
   prevLevel: number | null
   tankID: string
   tankLabel: string
 }
 
-export type TankLevelsT = Record<string, Record<string, TankLevel>>
+export type TankLevelsT = Record<string, Record<string, TTankLevel>>
