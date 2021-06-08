@@ -30,20 +30,22 @@ export const populateTanks = (dips: IDipsData, tanks: TStationTanks): TDipTanksM
       // match tank fuel type from our list
       if (t.fuelType === ft) {
         const tmp: ITankDip = Object.assign({ ...tmpTank })
+        tmp.tankID = t.tankID
+        tmp.tankLabel = `${t.tank.size}(${t.tankID}) ${ft}`
+
         if (curDips) {
-          // FIXME: must be a cleaner way to do this
-          const tmpDip = curDips.find((ele: IDip) => t.id === ele.stationTankID)
-          if (tmpDip) {
-            tmp.dips = tmpDip
-            tmp.tankID = t.tankID
-            tmp.tankLabel = `${t.tank.size}(${t.tankID}) ${tmpDip.fuelType}`
-            tmp.level = tmpDip.level
-            tmp.litres = tmpDip.litres
-            if (tmpDip.fuelDelivery) {
-              tmp.delivery = tmpDip.fuelDelivery.litres
+          // now populate any data from current dip
+          const curDip = curDips.find((ele: IDip) => t.id === ele.stationTankID)
+          if (curDip) {
+            tmp.dips = curDip
+            tmp.level = curDip.level
+            tmp.litres = curDip.litres
+            if (curDip.fuelDelivery) {
+              tmp.delivery = curDip.fuelDelivery.litres
             }
           }
         }
+
         if (prevDips) {
           const tmpPrevDip = prevDips.find((ele: IDip) => t.id === ele.stationTankID)
           if (tmpPrevDip) {

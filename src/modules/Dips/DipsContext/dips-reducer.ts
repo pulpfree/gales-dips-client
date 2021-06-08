@@ -251,8 +251,12 @@ export const useDips = (): DipType => {
   React.useEffect(() => {
     if (dipsData) {
       const findDate = Number(format(date as Date, 'yyyyMMdd'))
-      const overshort = dipsData.dipOverShortRange.find((ele: IOvershort) => ele.date === findDate)
-      if (dipsData && stationData?.stationTanks && overshort) {
+      let overshort = null
+      if (dipsData.dipOverShortRange) {
+        overshort = dipsData.dipOverShortRange.find((ele: IOvershort) => ele.date === findDate)
+      }
+
+      if (dipsData && stationData?.stationTanks) {
         const tankLevels = setLevels(stationData.stationTanks)
         dispatch({ type: SET_TANK_LEVELS, payload: tankLevels })
 

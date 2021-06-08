@@ -91,6 +91,7 @@ export const DipsForm = (): JSX.Element => {
     }
 
     setTankDataField(tankID, 'litres', litres)
+    setTankDataField(tankID, 'level', inputLevel)
   }
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e): void => {
@@ -131,6 +132,9 @@ export const DipsForm = (): JSX.Element => {
                         <TextField
                           autoFocus={i === 0}
                           className={classes.input}
+                          // error
+                          // helperText='Incorrect entry.'
+                          // label='Error'
                           id={`${k}_level`}
                           margin='dense'
                           name={`${k}_level`}
